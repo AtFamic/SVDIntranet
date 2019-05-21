@@ -1,0 +1,134 @@
+@media screen and (min-width:640px){
+	div.informatiion{
+    margin:10px;
+	}
+
+	span p{
+	    background-color:rgb(93,171,219);
+	    color:white;
+	    font-weight:bold;
+	    font-size:large;
+	    padding:5px;
+	}
+
+	form{
+		color:rgb(78,102,122);
+		width:90%;
+		margin-top:5px;
+		padding: 30px;
+		height:100%;
+		background: rgb(240,245,247);
+		border: 1px solid #cccccc;
+		-webkit-border-radius: 7px;
+		-moz-border-radus: 7px; border-radius: 7px;
+		-webkit-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+		box-shadow:2px 2px 6px rgba(0, 0, 0, 0.3);
+	}
+
+	div.input p{
+		width:50%;
+
+	}
+	form .input input{
+		width:50%;
+	}
+
+	textarea{
+		width:80%;
+		height:120px;
+		resize:vertical;
+	}
+
+	input[type="submit"]{
+		width:130px;
+		height:40px;
+		background-color:rgb(39, 146, 212);
+		border:solid rgb(39, 146, 212);
+		border-radius:10px;
+		font-weight:bold;
+		color:white;
+	}
+	input[type="reset"]{
+		width:130px;
+		height:40px;
+		background-color:rgb(252, 252, 252);
+		border:solid 0.5px black;
+		border-radius:10px;
+		font-weight:bold;
+		color:rgb(39, 146, 212);
+	}
+	div.submit{
+		display
+		display:inline-block;
+		text-align:center;
+	}
+}
+
+@media screen and (max-width:640px){
+	body{
+		margin:0px;
+	}
+	div.informatiion{
+    margin:10px;
+	}
+
+	span p{
+	    background-color:rgb(93,171,219);
+	    color:white;
+	    font-weight:bold;
+	    font-size:large;
+	    padding:5px;
+	}
+
+	form{
+		color:rgb(78,102,122);
+		width:83%;
+		margin-top:5px;
+		padding: 30px;
+		height:100%;
+		background: rgb(240,245,247);
+		border: 1px solid #cccccc;
+		-webkit-border-radius: 7px;
+		-moz-border-radus: 7px; border-radius: 7px;
+		-webkit-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+		box-shadow:2px 2px 6px rgba(0, 0, 0, 0.3);
+	}
+
+	div.input p{
+		width:50%;
+
+	}
+	form .input input{
+		width:200%;
+	}
+
+	textarea{
+		width:80%;
+		height:120px;
+		resize:vertical;
+	}
+
+	input[type="submit"]{
+		width:130px;
+		height:40px;
+		background-color:rgb(39, 146, 212);
+		border:solid rgb(39, 146, 212);
+		border-radius:10px;
+		font-weight:bold;
+		color:white;
+	}
+	input[type="reset"]{
+		width:130px;
+		height:40px;
+		background-color:rgb(252, 252, 252);
+		border:solid 0.5px black;
+		border-radius:10px;
+		font-weight:bold;
+		color:rgb(39, 146, 212);
+	}
+	div.submit{
+		display
+		display:inline-block;
+		text-align:center;
+	}
+}

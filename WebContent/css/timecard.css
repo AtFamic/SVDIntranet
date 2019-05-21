@@ -1,0 +1,94 @@
+@media screen and (max-width:640px){
+
+	div.timecard p{
+	    margin-top:15px;
+	    background-color:rgb(93,171,219);
+	    color:white;
+	    font-weight:bold;
+	    padding:4px;
+	    font-size:large;
+	}
+	table.caption th.date{
+	    width:70%;
+	}
+	table.caption th.changeDate{
+	    width:10%;
+	    background-color:#EFEFEF;
+	    border:solid 1px #EFEFEF;
+	    border-radius:10px;
+	}
+	table.caption th a{
+	    text-decoration:none;
+	    font-size:x-small;
+	}
+	table.timeCard{
+	    border:solid #EFEFEF;
+	    border-spacing:0px;
+	    width:100%;
+	    table-layout:fixed;
+    	word-break:break-all;
+    	word-wrap:break-all;
+	}
+	table.timeCard th,td{
+	    border:solid 0.5px white;
+	}
+	table.timeCard th{
+	    font-weight:normal;
+	    text-align:left;
+	    font-size:small;
+	}
+	table.timeCard td{
+		font-size:small;
+	}
+	table.timeCard td a{
+		font-size:small;
+	    text-decoration:none;
+	    font-weight:500;
+	}
+}
+
+@media screen and (min-width:640px){
+	div.timecard{
+    margin-left:20px;
+	}
+
+	div.timecard p{
+	    margin-top:15px;
+	    background-color:rgb(93,171,219);
+	    color:white;
+	    font-weight:bold;
+	    padding:4px;
+	    font-size:large;
+	}
+	table.caption th.date{
+	    width:70%;
+	}
+	table.caption th.changeDate{
+	    width:10%;
+	    background-color:#EFEFEF;
+	    border:solid 1px #EFEFEF;
+	    border-radius:10px;
+	}
+	table.caption th a{
+	    text-decoration:none;
+	    font-size:small;
+	}
+	table.timeCard{
+	    border:solid #EFEFEF;
+	    border-spacing:0px;
+	    width:450px;
+	}
+	table.timeCard th,td{
+	    border:solid 0.5px white;
+	    width:50px;
+	}
+	table.timeCard th{
+	    font-weight:normal;
+	    text-align:left;
+	    font-size:small;
+	}
+	table.timeCard td a{
+	    text-decoration:none;
+	    font-weight:500;
+	}
+}

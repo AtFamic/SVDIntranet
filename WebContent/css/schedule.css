@@ -1,0 +1,323 @@
+@media screen and (min-width:640px){
+	div#caption{
+	background-color:rgb(93,171,219);
+	color:white;
+	font-size:small;
+	font-weight:normal;
+	vertical-align:center;
+	margin:0px;
+	padding-left:20px;
+	width:92.5%;
+	height:40px;
+	}
+	form{
+		color:rgb(78,102,122);
+		width:90%;
+		margin-top:5px;
+		padding: 30px;
+		background: rgb(240,245,247);
+		border: 1px solid #cccccc;
+		-webkit-border-radius: 7px;
+		-moz-border-radus: 7px; border-radius: 7px;
+		-webkit-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+		box-shadow:2px 2px 6px rgba(0, 0, 0, 0.3);
+	}
+
+	form .input{
+		width:70%
+	}
+	form .contents{
+		width:80%;
+		height:48px;
+		resize:vertical;
+	}
+	label.date{
+		background-color:white;
+		position: relative;
+	  	display: inline-block;
+	  	width: 140px;
+	  	border: 2px solid #ccc;
+	  	border-radius: 15px;
+	}
+	input[type="date"] {
+	  position: relative;
+	  padding: 0 10px;
+	  width: 100%;
+	  height: 30px;
+	  border: 0;
+	  background: transparent;
+	  box-sizing: border-box;
+	  font-size: 14px;
+	  color: gray;
+	}
+	label::before {
+	  position: absolute;
+	  content: "";
+	  top: 2px;
+	  right: 0;
+	  width: 25px;
+	  height: 25px;
+	  background-color:#06c;
+	  background-image: url("../img/calendar.png");
+	  background-repeat: no-repeat;
+	  background-position: center;
+	  border-radius: 10px;
+	}
+	input[type="date"]::-webkit-inner-spin-button{
+	  -webkit-appearance: none;
+	}
+	input[type="date"]::-webkit-clear-button{
+	  -webkit-appearance: none;
+	}
+	input[type="date"]::-webkit-calendar-picker-indicator{
+	  position: absolute;
+	  right: 0px;
+	  top: 2px;
+	  padding: 0;
+	  width: 25px;
+	  height: 25px;
+	  background: transparent;
+	  color: transparent;
+	  cursor: pointer;
+	}
+	label.time select{
+		height:25px;
+		border:solid 2px #ccc;
+		border-radius:10px;
+	}
+
+	select.color{
+		width:auto;
+		height:25px;
+	}
+	select .ouhou{
+	    background-color:rgb(255,235,212);
+	}
+	select .sagyou{
+	    background-color:rgb(237,237,237);
+	}
+	select .shucchou{
+	    background-color:rgb(237,225,249);
+	}
+	select .shussha{
+	    background-color:rgb(235,250,220);
+	}
+	select .kigenkanri{
+	    background-color:rgb(255,235,212);
+	}
+	select .reportchakushu{
+	    background-color:rgb(225,245,220);
+	}
+	select .reportteishutsu{
+	    background-color:rgb(255,222,222);
+	}
+	select .kaigi{
+	    background-color:rgb(219,232,249);
+	}
+	select .raihou{
+	    background-color:rgb(232,251,255);
+	}
+	select .yasumi{
+	    background-color:rgb(237,225,249);
+	}
+	select .shokisokuhou{
+	    background-color:rgb(255,222,222);
+	}
+	.input{
+		width:200px;
+		height:25px;
+	}
+
+	div.submit{
+		width:100%;
+		display:inline-block;
+		text-align:center;
+	}
+	div.submit input[type="submit"]{
+		width:130px;
+		height:40px;
+		background-color:rgb(39, 146, 212);
+		border:solid rgb(39, 146, 212);
+		border-radius:10px;
+		font-weight:bold;
+		color:white;
+	}
+	div.submit input[type="reset"]{
+		width:130px;
+		height:40px;
+		background-color:rgb(252, 252, 252);
+		border:solid 0.5px black;
+		border-radius:10px;
+		font-weight:bold;
+		color:rgb(39, 146, 212);
+	}
+}
+
+@media screen and (max-width:640px){
+	body{
+		margin:0px;
+	}
+	div#caption{
+	background-color:rgb(93,171,219);
+	color:white;
+	font-size:small;
+	font-weight:normal;
+	vertical-align:center;
+	margin:0px;
+	padding-left:20px;
+	width:92.5%;
+	height:40px;
+	}
+	form{
+		margin:0;
+		color:rgb(78,102,122);
+		width:80%;
+		margin-top:5px;
+		padding: 30px;
+		background: rgb(240,245,247);
+		border: 1px solid #cccccc;
+		-webkit-border-radius: 7px;
+		-moz-border-radus: 7px; border-radius: 7px;
+		-webkit-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+		box-shadow:2px 2px 6px rgba(0, 0, 0, 0.3);
+		font-size:small;
+	}
+
+	form .input{
+		width:70%
+	}
+	form .contents{
+		width:80%;
+		height:48px;
+		resize:vertical;
+	}
+	label.date{
+		background-color:white;
+		position: relative;
+	  	display: inline-block;
+	  	width: 140px;
+	  	border: 2px solid #ccc;
+	  	border-radius: 15px;
+	}
+	input[type="date"] {
+	  position: relative;
+	  padding: 0 10px;
+	  width: 100%;
+	  height: 30px;
+	  border: 0;
+	  background: transparent;
+	  box-sizing: border-box;
+	  font-size: 14px;
+	  color: gray;
+	}
+	label::before {
+	  position: absolute;
+	  content: "";
+	  top: 2px;
+	  right: 0;
+	  width: 25px;
+	  height: 25px;
+	  background-color:#06c;
+	  background-image: url("../img/calendar.png");
+	  background-repeat: no-repeat;
+	  background-position: center;
+	  border-radius: 10px;
+	}
+	input[type="date"]::-webkit-inner-spin-button{
+	  -webkit-appearance: none;
+	}
+	input[type="date"]::-webkit-clear-button{
+	  -webkit-appearance: none;
+	}
+	input[type="date"]::-webkit-calendar-picker-indicator{
+	  position: absolute;
+	  right: 0px;
+	  top: 2px;
+	  padding: 0;
+	  width: 25px;
+	  height: 25px;
+	  background: transparent;
+	  color: transparent;
+	  cursor: pointer;
+	}
+	label.time select{
+		width:15%;
+		height:25px;
+		border:solid 2px #ccc;
+		border-radius:10px;
+	}
+	select {
+	-webkit-appearance: none;/* ベンダープレフィックス(Google Chrome、Safari用) */
+	-moz-appearance: none;	/* ベンダープレフィックス(Firefox用) */
+	appearance: none;	/* 標準のスタイルを無効にする */
+	}
+	::-ms-expand {	/* select要素のデザインを無効にする（IE用） */
+	display: none;
+	}
+	select.color{
+		width:auto;
+		height:25px;
+		width:30px;
+	}
+	select .ouhou{
+	    background-color:rgb(255,235,212);
+	}
+	select .sagyou{
+	    background-color:rgb(237,237,237);
+	}
+	select .shucchou{
+	    background-color:rgb(237,225,249);
+	}
+	select .shussha{
+	    background-color:rgb(235,250,220);
+	}
+	select .kigenkanri{
+	    background-color:rgb(255,235,212);
+	}
+	select .reportchakushu{
+	    background-color:rgb(225,245,220);
+	}
+	select .reportteishutsu{
+	    background-color:rgb(255,222,222);
+	}
+	select .kaigi{
+	    background-color:rgb(219,232,249);
+	}
+	select .raihou{
+	    background-color:rgb(232,251,255);
+	}
+	select .yasumi{
+	    background-color:rgb(237,225,249);
+	}
+	select .shokisokuhou{
+	    background-color:rgb(255,222,222);
+	}
+	.input{
+		width:100%;
+		height:25px;
+	}
+
+	div.submit{
+		width:100%;
+		display:inline-block;
+		text-align:center;
+	}
+	div.submit input[type="submit"]{
+		width:80px;
+		height:40px;
+		background-color:rgb(39, 146, 212);
+		border:solid rgb(39, 146, 212);
+		border-radius:10px;
+		font-weight:bold;
+		color:white;
+	}
+	div.submit input[type="reset"]{
+		width:110px;
+		height:40px;
+		background-color:rgb(252, 252, 252);
+		border:solid 0.5px black;
+		border-radius:10px;
+		font-weight:bold;
+		color:rgb(39, 146, 212);
+	}
+}

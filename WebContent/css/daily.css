@@ -1,0 +1,86 @@
+table.sche{
+	display:inline-block;
+	border:1px solid #a9a9a9;
+	padding:0;margin:5%;
+	border-collapse:collapse;
+	align:center;
+	}
+
+.left{
+	text-align:center;
+}
+
+td{
+	vertical-align:top;
+	margin:0px;padding:2px;
+	font-size:0.75em;
+	height:20px;
+	}
+
+td.top{
+	border-bottom:1px solid #a9a9a9;
+	text-align:center;
+	}
+td.time{
+	background-color:#f0f8ff;
+	text-align:right;
+	border-right:1px double #a9a9a9;
+	padding-right:5px;
+	}
+
+td.timeb{
+	background-color:#f0f8ff;
+	border-bottom:1px solid #a9a9a9;
+	border-right:1px double #a9a9a9;
+	}
+
+td.contents{
+	background-color:#ffffff;
+	border-bottom:1px dotted #a9a9a9;
+	}
+
+td.contentsb{
+	background-color:#ffffff;
+	border-bottom:1px solid #a9a9a9;
+	}
+
+td.ex{
+	background-color:#ffebcd;
+	border:1px solid #8b0000;
+	}
+
+img{
+	border:0px;
+	}
+
+p{
+	font-size:0.75em;
+	}
+
+#contents{
+	margin:0;
+	padding:0;
+	width:710px;
+	}
+
+#left{
+	margin:0;
+	padding:0;
+	float:left;
+	width:400px;
+	}
+#right{
+	margin:0;
+	padding:0;
+	float:right;
+	width:300px;
+	background-color:#ffffff;
+	}
+
+#contents:after{
+	content:".";
+	display:block;
+	height:0;
+	clear:both;
+	visibility:hidden;
+	}
