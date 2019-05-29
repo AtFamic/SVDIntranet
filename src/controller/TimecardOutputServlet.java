@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -12,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.Account;
-import model.TimecardWriter;
+import util.TimecardUtil;
 
 /**
  * Servlet implementation class TimecardOutputServlet
@@ -45,6 +46,7 @@ public class TimecardOutputServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@SuppressWarnings("resource")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		String sYear = (String)request.getParameter("startYear");
@@ -75,11 +77,16 @@ public class TimecardOutputServlet extends HttpServlet {
 	    request.setAttribute("isError", false);
 
 	    try {
-	    	TimecardWriter.write(user.getUserID(), start, end, file_path);
+	    	TimecardUtil.write(user.getUserID(), start, end, file_path);
 	    }catch(IllegalArgumentException e) {
 	    	e.printStackTrace();
 	    	request.setAttribute("isError", true);
 	    }
+	    //CSVの書き込み
+	    response.setContentType("text/csv");
+	    response.setHeader("Content-Disposition", "attachment;filename=\"timecard.csv\"");
+	    PrintWriter CSV_Writer = response.getWriter();
+
 	    RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/timecardOutput.jsp");
 		dispatcher.forward(request, response);
 	}

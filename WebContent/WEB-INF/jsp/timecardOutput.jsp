@@ -1,17 +1,17 @@
-<%@page import="model.TimecardWriter"%>
+<%@page import="util.TimecardUtil"%>
 <%@page import="java.util.Date"%>
 <%@page import="dao.TimeCard"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%
-    String sYear = TimecardWriter.getYearHTML("startYear");
-    String sMonth = TimecardWriter.getMonthHTML("startMonth");
-    String sDate = TimecardWriter.getDateHTML("startDate");
-    String eYear = TimecardWriter.getYearHTML("endYear");
-    String eMonth = TimecardWriter.getMonthHTML("endMonth");
-    String eDate = TimecardWriter.getDateHTML("endDate");
-    String file_path = request.getParameter("file_path");
+    	String sYear = TimecardUtil.getYearHTML("startYear");
+        String sMonth = TimecardUtil.getMonthHTML("startMonth");
+        String sDate = TimecardUtil.getDateHTML("startDate");
+        String eYear = TimecardUtil.getYearHTML("endYear");
+        String eMonth = TimecardUtil.getMonthHTML("endMonth");
+        String eDate = TimecardUtil.getDateHTML("endDate");
+        String file_path = request.getParameter("file_path");
     %>
 <!DOCTYPE html>
 <html>

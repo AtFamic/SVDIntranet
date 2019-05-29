@@ -4,22 +4,23 @@ import com.github.mygreen.supercsv.annotation.CsvBean;
 import com.github.mygreen.supercsv.annotation.CsvColumn;
 
 //タイムカード用のカラムの作成
-@CsvBean(header=true)
+
+@CsvBean(header = true)
 public class TimecardBean {
 
-	@CsvColumn(number = 1, label = "Name")
+	@CsvColumn(number = 1, label = "名前")
 	private String name;
 
-	@CsvColumn(number = 2, label = "Date")
+	@CsvColumn(number = 2, label = "日付")
 	private String date;
 
-	@CsvColumn(number = 3, label = "Start")
+	@CsvColumn(number = 3, label = "開始時間")
 	private String startTime;
 
-	@CsvColumn(number = 4, label = "End")
+	@CsvColumn(number = 4, label = "終了時間")
 	private String endTime;
 
-	@CsvColumn(number = 5, label = "Working Time")
+	@CsvColumn(number = 5, label = "勤務時間")
 	private int workingTime;
 
 	public String getName() {

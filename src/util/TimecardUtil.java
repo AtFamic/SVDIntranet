@@ -1,4 +1,4 @@
-package model;
+package util;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,13 +10,19 @@ import java.util.List;
 
 import org.supercsv.prefs.CsvPreference;
 
+import com.github.mygreen.supercsv.io.CsvAnnotationBeanReader;
 import com.github.mygreen.supercsv.io.CsvAnnotationBeanWriter;
 
 import dao.AccountDAO;
 import dao.TimeCard;
 import dao.TimeCardDAO;
+import model.TimecardBean;
 
-public class TimecardWriter {
+public class TimecardUtil {
+
+	private static final String BR = System.lineSeparator();
+
+	private static final String COMMA = ",";
 
 	/**
 	 * 指定したユーザーのタイムカードをCSV形式で出力します
@@ -25,16 +31,16 @@ public class TimecardWriter {
 	 * @param end YYYYMMDD形式で入力してください
 	 * @param file_path ファイルの保存先を指定してください
 	 */
-	public static void write(String userID, String start, String end, String file_path) throws IOException, IllegalArgumentException{
+	public static void write(String userID, String start, String end, String file_path)
+			throws IOException, IllegalArgumentException {
 
 		System.out.println(file_path);
-//		ICsvBeanWriter beanWriter = null;
-//		FileOutputStream fos = new FileOutputStream(new File("timecard.csv"));
-//		OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-//		beanWriter = new CsvBeanWriter(osw, CsvPreference.EXCEL_PREFERENCE);
-//		beanWriter.writeHeader("START TIME");
-//		beanWriter.close();
-
+		//		ICsvBeanWriter beanWriter = null;
+		//		FileOutputStream fos = new FileOutputStream(new File("timecard.csv"));
+		//		OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+		//		beanWriter = new CsvBeanWriter(osw, CsvPreference.EXCEL_PREFERENCE);
+		//		beanWriter.writeHeader("START TIME");
+		//		beanWriter.close();
 
 		/*
 		 * まずタイムカードを取得します。
@@ -42,32 +48,30 @@ public class TimecardWriter {
 		 * NULLの場合は一つだけ名前以外を空白としたものを含ませます。
 		 */
 		//入力値チェック
-		if(start == null || end == null) {
+		if (start == null || end == null) {
 			throw new IllegalArgumentException("開始日または終了日がNULLです");
 		}
-		if(!start.matches("[12]\\d{3}[01]\\d[0123]\\d")){
+		if (!start.matches("[12]\\d{3}[01]\\d[0123]\\d")) {
 			throw new IllegalArgumentException("開始日はYYYYMMDDの形式で入力してください");
 		}
-		if(!end.matches("[12]\\d{3}[01]\\d[0123]\\d")){
+		if (!end.matches("[12]\\d{3}[01]\\d[0123]\\d")) {
 			throw new IllegalArgumentException("終了日はYYYYMMDDの形式で入力してください");
 		}
-		if( Integer.parseInt(start) - Integer.parseInt(end) >= 0) {
+		if (Integer.parseInt(start) - Integer.parseInt(end) >= 0) {
 			throw new IllegalArgumentException("開始日は終了日よりも早くできません");
 		}
-
-
 
 		List<TimecardBean> output = getTimecardBeans(userID, start, end);
 
 		CsvAnnotationBeanWriter<TimecardBean> csvWriter = new CsvAnnotationBeanWriter<>(TimecardBean.class,
-				Files.newBufferedWriter(new File(file_path).toPath(), Charset.forName("UTF-16")),
+				Files.newBufferedWriter(new File(file_path).toPath(), Charset.forName("UTF-8")),
 				CsvPreference.EXCEL_PREFERENCE);
 
 		csvWriter.writeHeader();
 
 		int size = output.size();
 		System.out.println(size);
-		for(int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++) {
 
 			//名前、日付、開始時間、終了時間、総勤務時間が正しいのかをチェックします。
 			//不正な場合はIllegalArgumentExceptionを吐きます
@@ -77,22 +81,22 @@ public class TimecardWriter {
 			String date = temp.getDate();
 			String startTime = temp.getStartTime();
 			String endTime = temp.getEndTime();
-			if(name == null) {
+			if (name == null) {
 				throw new IllegalArgumentException("名前がNULLです");
 			}
-			if(date == null) {
+			if (date == null) {
 				throw new IllegalArgumentException("日付がNULLです");
 			}
-			if(!date.matches("[12]\\d{3}[01]\\d[0123]\\d")){
+			if (!date.matches("[12]\\d{3}[01]\\d[0123]\\d")) {
 				throw new IllegalArgumentException("日付はYYYYMMDDの形式で入力してください");
 			}
-			if(startTime == null || endTime == null) {
+			if (startTime == null || endTime == null) {
 				throw new IllegalArgumentException("開始時間および終了時間がNULLです");
 			}
-			if(!startTime.matches("\\d{2}[:]\\d{2}") && !startTime.equals("")) {
+			if (!startTime.matches("\\d{2}[:]\\d{2}") && !startTime.equals("")) {
 				throw new IllegalArgumentException("開始時間はHH:mmの形式で入力してください");
 			}
-			if(!endTime.matches("\\d{2}[:]\\d{2}") && !endTime.equals("")) {
+			if (!endTime.matches("\\d{2}[:]\\d{2}") && !endTime.equals("")) {
 				throw new IllegalArgumentException("終了時間はHH:mmの形式で入力してください");
 			}
 			temp.setWorkingTime(calculateWorkingTime(startTime, endTime));
@@ -104,7 +108,100 @@ public class TimecardWriter {
 		csvWriter.close();
 	}
 
-	//指定した日付の間を含むTimecardをListで出力します
+	public static void writeCSV(String userID, String startTime, String endTime, String filePath) throws IOException {
+		//ファイルの存在確認
+		if (!new File(filePath).exists()) {
+			//ファイルが存在しない場合新しくファイルを作成する
+			System.out.println("ファイル不存在");
+			try {
+				new File(filePath).createNewFile();
+			} catch (IOException e) {
+				throw new IOException("指定先のフォルダが存在していません。");
+			}
+		}
+		//出力データ取得
+//		List<TimecardBean> output = getTimecardBeans(userID, startTime, endTime);
+		List<TimecardBean> output = new ArrayList<>();
+		TimecardBean timecardBean1 = new TimecardBean();
+		timecardBean1.setName("榊原　崇文");
+		timecardBean1.setDate("20190529");
+		timecardBean1.setStartTime("22:00");
+		timecardBean1.setEndTime("24:00");
+		timecardBean1.setWorkingTime(120);
+		output.add(timecardBean1);
+
+		CsvAnnotationBeanWriter<TimecardBean> csvWriter = new CsvAnnotationBeanWriter<>(TimecardBean.class,
+				Files.newBufferedWriter(new File(filePath).toPath(), Charset.forName("Shift-JIS")),
+				CsvPreference.EXCEL_PREFERENCE);
+		csvWriter.writeAll(output);
+		csvWriter.close();
+	}
+
+	/**
+	 * ファイルパスに指定されたCSVを読み込み、文字列形式にして出力する
+	 * @param filePath
+	 * @return
+	 */
+	public static String readCSV(String filePath) throws IOException {
+		StringBuilder result = new StringBuilder("");
+		CsvAnnotationBeanReader<TimecardBean> csvReader = new CsvAnnotationBeanReader<>(TimecardBean.class,
+				Files.newBufferedReader(new File(filePath).toPath(), Charset.forName("UTF-8")),
+				CsvPreference.EXCEL_PREFERENCE);
+
+		List<TimecardBean> list = new ArrayList<>();
+		//ヘッダーの取得
+		String[] headers = csvReader.getHeader(true);
+		TimecardBean record = null;
+		while ((record = csvReader.read()) != null) {
+			list.add(record);
+		}
+		//ヘッダーの出力
+		int size = headers.length;
+		for (int i = 0; i < size; i++) {
+			result.append(headers[i]);
+			if (i == (size - 1)) {
+				break;
+			}
+			result.append(COMMA);
+		}
+		result.append(BR);
+
+		//内容の出力
+		size = list.size();
+		record = null;
+		for (int i = 0; i < size; i++) {
+			record = list.get(i);
+			String name = record.getName();
+			String date = record.getDate();
+			String start = record.getStartTime();
+			String end = record.getEndTime();
+			int working_time = record.getWorkingTime();
+
+			String output = name + COMMA + date + COMMA + start + COMMA + end + COMMA + working_time + BR;
+			result.append(output);
+		}
+
+		csvReader.close();
+
+		return result.toString();
+
+	}
+
+
+	/**
+	 * BOMを取得するメソッド
+	 * @return UTF-8のBOM
+	 */
+	public static String getBOM() {
+		return "EF BB BF ";
+	}
+	/**
+	 *指定した日付の間を含むTimecardをListで出力します
+	 * @param userID
+	 * @param start YYYYMMDD形式
+	 * @param end
+	 * @return
+	 */
 	private static List<TimecardBean> getTimecardBeans(String userID, String start, String end) {
 
 		List<TimecardBean> result = new ArrayList<TimecardBean>();
@@ -123,13 +220,15 @@ public class TimecardWriter {
 		eCalendar.set(Calendar.HOUR, 23);
 		eCalendar.set(Calendar.MINUTE, 59);
 
-		while(sCalendar.before(eCalendar)) {
-			List<TimeCard> timeCards = TimeCardDAO.findTimeCardByUserIDANDDate(userID, String.valueOf(sCalendar.get(Calendar.YEAR)), String.valueOf(sCalendar.get(Calendar.MONTH)) ,String.valueOf(sCalendar.get(Calendar.DATE)));
-			if(timeCards == null) {
+		while (sCalendar.before(eCalendar)) {
+			List<TimeCard> timeCards = TimeCardDAO.findTimeCardByUserIDANDDate(userID,
+					String.valueOf(sCalendar.get(Calendar.YEAR)), String.valueOf(sCalendar.get(Calendar.MONTH)),
+					String.valueOf(sCalendar.get(Calendar.DATE)));
+			if (timeCards == null) {
 				continue;
 			}
 			int size = timeCards.size();
-			for(int i = 0; i < size; i++) {
+			for (int i = 0; i < size; i++) {
 				String year = String.valueOf(sCalendar.get(Calendar.YEAR));
 				String month = String.valueOf(sCalendar.get(Calendar.MONTH));
 				if (month.length() == 1) {
@@ -164,7 +263,7 @@ public class TimecardWriter {
 	}
 
 	private static int calculateWorkingTime(String startTime, String endTime) {
-		if(startTime.equals("") && endTime.equals("")) {
+		if (startTime.equals("") && endTime.equals("")) {
 			return 0;
 		}
 		String[] start = startTime.split(":");
@@ -174,17 +273,17 @@ public class TimecardWriter {
 		int workEnd = Integer.parseInt(end[0]) * 60 + Integer.parseInt(end[1]);
 
 		//日付をまたいだ場合
-		if(workEnd < workStart) {
+		if (workEnd < workStart) {
 			workEnd += 60 * 24;
 		}
 
 		return workEnd - workStart;
 
-//		int duration = workEnd - workStart;
-//		int hours = duration / 60;
-//		int min = duration % 60;
-//		//HH:mm形式で出力
-//		return String.valueOf(hours).concat(":").concat(String.valueOf(min));
+		//		int duration = workEnd - workStart;
+		//		int hours = duration / 60;
+		//		int min = duration % 60;
+		//		//HH:mm形式で出力
+		//		return String.valueOf(hours).concat(":").concat(String.valueOf(min));
 	}
 
 	/**
@@ -197,10 +296,10 @@ public class TimecardWriter {
 		Calendar today = Calendar.getInstance();
 
 		result.append("<select name=\"" + name + "\">\r\n");
-		for(int i = 1995; i < 2050; i++) {
-			if(today.get(Calendar.YEAR) == i) {
+		for (int i = 1995; i < 2050; i++) {
+			if (today.get(Calendar.YEAR) == i) {
 				result.append("<option value=\"" + i + "\" selected>" + i + "</option>\r\n");
-			}else {
+			} else {
 				result.append("<option value=\"" + i + "\">" + i + "</option>\r\n");
 			}
 		}
@@ -218,17 +317,17 @@ public class TimecardWriter {
 		Calendar today = Calendar.getInstance();
 
 		result.append("<select name=\"" + name + "\">\r\n");
-		for(int i = 1; i < 13; i++) {
-			if(today.get(Calendar.MONTH) + 1 == i) {
-				if(i < 10) {
+		for (int i = 1; i < 13; i++) {
+			if (today.get(Calendar.MONTH) + 1 == i) {
+				if (i < 10) {
 					result.append("<option value=\"0" + i + "\" selected>" + i + "</option>\r\n");
-				}else {
+				} else {
 					result.append("<option value=\"" + i + "\" selected>" + i + "</option>\r\n");
 				}
-			}else {
-				if(i < 10) {
+			} else {
+				if (i < 10) {
 					result.append("<option value=\"0" + i + "\" selected>" + i + "</option>\r\n");
-				}else {
+				} else {
 					result.append("<option value=\"" + i + "\">" + i + "</option>\r\n");
 				}
 			}
@@ -246,18 +345,18 @@ public class TimecardWriter {
 		StringBuilder result = new StringBuilder();
 		Calendar today = Calendar.getInstance();
 
-		result.append("<select name=\"" + name +"\">");
-		for(int i = 1; i < 32; i++) {
-			if(today.get(Calendar.DATE) == i) {
-				if(i < 10) {
+		result.append("<select name=\"" + name + "\">");
+		for (int i = 1; i < 32; i++) {
+			if (today.get(Calendar.DATE) == i) {
+				if (i < 10) {
 					result.append("<option value=\"0" + i + "\" selected>" + i + "</option>\r\n");
-				}else {
+				} else {
 					result.append("<option value=\"" + i + "\" selected>" + i + "</option>\r\n");
 				}
-			}else {
-				if(i < 10) {
+			} else {
+				if (i < 10) {
 					result.append("<option value=\"0" + i + "\" selected>" + i + "</option>\r\n");
-				}else {
+				} else {
 					result.append("<option value=\"" + i + "\">" + i + "</option>\r\n");
 				}
 			}

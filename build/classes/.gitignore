@@ -1,5 +1,2 @@
-/controller/
-/dao/
-/filter/
 /model/
-/test/
+/util/

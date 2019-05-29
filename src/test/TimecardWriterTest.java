@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.TimecardBean;
-import model.TimecardWriter;
+import util.TimecardUtil;
 
 public class TimecardWriterTest {
 
@@ -23,7 +23,7 @@ public class TimecardWriterTest {
 
 			timecardBeans.add(timecardBean1);
 //			timecardBeans.add(timecardBean2);
-			TimecardWriter.write("sakakibara@starv-data.com", "20190101", "20190317",
+			TimecardUtil.write("sakakibara@starv-data.com", "20190101", "20190317",
 					"C:\\Users\\atfam\\OneDrive\\Documents\\Star_View_Data\\Learnings\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp1\\wtpwebapps\\SVD_IntraNet\\csv\\timecard.csv");
 		}catch (IOException e) {
 			// TODO: handle exception
