@@ -6,7 +6,9 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.supercsv.prefs.CsvPreference;
 
@@ -23,6 +25,26 @@ public class TimecardUtil {
 	private static final String BR = System.lineSeparator();
 
 	private static final String COMMA = ",";
+
+	/**
+	 * 開始時間から終了時間までの経過時間を計算します。
+	 * @param start_time 開始時間
+	 * @param end_time 終了時間
+	 * @return 勤務時間
+	 */
+	public static int calculate_workingtime(String start_time, String end_time) {
+		int result = 0;
+		String[] start_array = DayUtil.formatStr(start_time);
+		String[] end_array = DayUtil.formatStr(end_time);
+		result += (Integer.parseInt(end_array[DayUtil.YEAR]) - Integer.parseInt(start_array[DayUtil.YEAR])) * 365 * 24 * 60;
+		result += (Integer.parseInt(end_array[DayUtil.MONTH]) - Integer.parseInt(start_array[DayUtil.MONTH]))* 24 * 30 * 60;
+		result += (Integer.parseInt(end_array[DayUtil.DATE]) - Integer.parseInt(start_array[DayUtil.DATE])) * 24 * 60;
+		result += (Integer.parseInt(end_array[DayUtil.HOUR]) - Integer.parseInt(start_array[DayUtil.HOUR])) * 60;
+		result += (Integer.parseInt(end_array[DayUtil.MIN]) - Integer.parseInt(start_array[DayUtil.MIN]));
+
+		return result;
+
+	}
 
 	/**
 	 * 指定したユーザーのタイムカードをCSV形式で出力します
@@ -120,15 +142,8 @@ public class TimecardUtil {
 			}
 		}
 		//出力データ取得
-//		List<TimecardBean> output = getTimecardBeans(userID, startTime, endTime);
-		List<TimecardBean> output = new ArrayList<>();
-		TimecardBean timecardBean1 = new TimecardBean();
-		timecardBean1.setName("榊原　崇文");
-		timecardBean1.setDate("20190529");
-		timecardBean1.setStartTime("22:00");
-		timecardBean1.setEndTime("24:00");
-		timecardBean1.setWorkingTime(120);
-		output.add(timecardBean1);
+		List<TimecardBean> output = getTimecardBeans(userID, startTime, endTime);
+
 
 		CsvAnnotationBeanWriter<TimecardBean> csvWriter = new CsvAnnotationBeanWriter<>(TimecardBean.class,
 				Files.newBufferedWriter(new File(filePath).toPath(), Charset.forName("Shift-JIS")),
@@ -187,7 +202,6 @@ public class TimecardUtil {
 
 	}
 
-
 	/**
 	 * BOMを取得するメソッド
 	 * @return UTF-8のBOM
@@ -195,6 +209,7 @@ public class TimecardUtil {
 	public static String getBOM() {
 		return "EF BB BF ";
 	}
+
 	/**
 	 *指定した日付の間を含むTimecardをListで出力します
 	 * @param userID
@@ -260,6 +275,29 @@ public class TimecardUtil {
 		}
 		return result;
 
+	}
+
+	/**
+	 * 指定した開始日と終了日までの全日程をキーにもち、その日付に対応するタイムカードを値に持つMapを返却します。
+	 * @param userID ユーザID
+	 * @param start 開始日
+	 * @param end 終了日
+	 * @return 開始日から終了日までの全日程に対応するタイムカード情報を保持したマップ
+	 */
+	private static Map<String, List<TimeCard>> getTimecardBeansMap(String userID, String start, String end) {
+		//対象日付のリストを取得
+		List<String> dateList = DayUtil.dateList(start, end);
+
+		//Map<日付, List<TimecardBean>> を取得
+		Map<String, List<TimeCard>> result = new HashMap<>();
+
+		int size = dateList.size();
+		for (int i = 0; i < size; i++) {
+			String[] tmp = DayUtil.formatStr(dateList.get(i));
+			result.put(dateList.get(i), TimeCardDAO.findTimeCardByUserIDANDDate(userID, tmp[DayUtil.YEAR],
+					tmp[DayUtil.MONTH], tmp[DayUtil.DATE]));
+		}
+		return result;
 	}
 
 	private static int calculateWorkingTime(String startTime, String endTime) {
