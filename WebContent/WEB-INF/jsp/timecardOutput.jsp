@@ -48,9 +48,6 @@
 </table>
 <div class="submit">
 <input type="submit" value="出力">
-<span>
-<a href="${file_path}" download="timecard">ダウンロード</a>
-</span>
 <input type="reset" value="入力を取り消す">
 </div>
 </form>

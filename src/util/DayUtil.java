@@ -10,6 +10,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import enumurated.DateEnum;
+
 /**
  * 日付情報に対応するUtilを集めたクラス
  * @author atfam
@@ -31,6 +33,11 @@ public class DayUtil {
 	public static final String YYYYMMDDHHmm = "yyyyMMddHHmm";
 	/** YYYY/MM/DD HH:mm */
 	public static final String YYYY_MM_DD_HH_mm = "yyyy/MM/dd HH:mm";
+	/** HH:mm */
+	public static final String HH_mm = "HH:mm";
+	/** HHmm */
+	public static final String HHmm = "HHmm";
+
 
 	public static final int YEAR = 0;
 	public static final int MONTH = 1;
@@ -46,6 +53,9 @@ public class DayUtil {
 	 * @return 年・月・日付・時間・分が順に入った文字列の配列
 	 */
 	public static String[] formatStr(String date) throws IllegalArgumentException {
+		if(date.equals("") || date == null) {
+			return null;
+		}
 		SimpleDateFormat format = null;
 		//dateの形でフォーマットを推測する
 		//YYYYMMDD
@@ -63,6 +73,24 @@ public class DayUtil {
 		//YYYY/MM/DD HH:mm
 		if (date.matches("^[\\d]{4}[/][\\d]{2}[/][\\d]{2}[\\s][\\d]{2}[:][\\d]{2}$")) {
 			format = new SimpleDateFormat(YYYY_MM_DD_HH_mm);
+		}
+		//時間形式の場合は別対応
+		// HH:mm
+		if(date.matches("^[\\d]{2}[:][\\d]{2}$")) {
+			format = new SimpleDateFormat(HH_mm);
+			String[] result = new String[6];
+			String[] tmp = date.split(":");
+			result[HOUR] = tmp[0];
+			result[MIN] = tmp[1];
+			return result;
+		}
+		//HHmm
+		if(date.matches("^[\\d]{2}[\\d]{2}$")) {
+			format = new SimpleDateFormat(HHmm);
+			String[] result = new String[6];
+			result[HOUR] = date.substring(0, 2);
+			result[MIN] = date.substring(2,4);
+			return result;
 		}
 
 		Calendar calendar = Calendar.getInstance();
@@ -147,9 +175,34 @@ public class DayUtil {
 	 * @param array
 	 * @return
 	 */
-	private static String parseFromStringArray(String[] array) {
+	public static String parseFromStringArray(String[] array) {
 		return array[YEAR] + array[MONTH] + array[DATE];
 	}
+
+	/**
+	 * 文字列配列から文字列に変換します。指定がない場合はYYYYMMDD形式で出力します。
+	 * @param array
+	 * @return
+	 */
+	public static String parseFromStringArray(String[] array, DateEnum format) throws ParseException {
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format.YYYYMMDD.getFormatStr());
+		Date date = simpleDateFormat.parse(parseFromStringArray(array));
+		return new SimpleDateFormat(format.getFormatStr()).format(date);
+	}
+
+	/**
+	 * 文字列配列から時間を生成します。指定がない場合はHH:mm形式で出力します。
+	 * @param array
+	 * @return
+	 */
+	public static String parseToHHMM(String[] array) {
+		if(array == null || array.length < 2) {
+			return "N/A";
+		}
+		return array[DayUtil.HOUR] + ":" + array[DayUtil.MIN];
+	}
+
 	/**
 	 * 現在の曜日を返します。
 	 * @return	現在の曜日

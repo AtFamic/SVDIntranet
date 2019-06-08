@@ -7,7 +7,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class DayUtilTest {
+import enumurated.DateEnum;
+
+public class DayUtilTest extends DayUtil {
 
 	@Test
 	public void YYYYMMDDのテスト() {
@@ -56,6 +58,18 @@ public class DayUtilTest {
 			e.printStackTrace();
 			fail();
 		}
+
+	}
+
+	@Test
+	public void 日付の形式の変更() {
+		String[] dates = { "2019", "06", "19" };
+		try {
+			assertThat(parseFromStringArray(dates, DateEnum.YYYY_MM_DD), is("2019/06/19"));
+		}catch(Exception e) {
+			fail();
+		}
+
 
 	}
 

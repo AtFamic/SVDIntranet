@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import model.TimecardBean;
@@ -31,27 +32,30 @@ public class TimecardUtilTest {
 
 	}
 
-	@Test
+	@Ignore
 	public void WriteCSV() {
 		try {
-			TimecardUtil.writeCSV("sakakibara", "20190501", "20190531", "C:\\Users\\atfam\\OneDrive\\Documents\\Star_View_Data\\Learnings\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp1\\wtpwebapps\\SVD_IntraNet\\csv\\timecard.csv");
-		}catch (IOException e) {
+			TimecardUtil.writeCSV("sakakibara@starv-data.com", "20190101", "20190531",
+					"C:\\Users\\atfam\\OneDrive\\Documents\\Star_View_Data\\Learnings\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp1\\wtpwebapps\\SVD_IntraNet\\csv\\");
+			System.out.println("Finished");
+		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
 		}
 	}
-//	@Ignore
-//	public void ReadCSV() {
-//		try {
-//			String result = TimecardUtil.readCSV(
-//					"C:\\Users\\atfam\\OneDrive\\Documents\\Star_View_Data\\Learnings\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp1\\wtpwebapps\\SVD_IntraNet\\csv\\timecard.csv");
-//			System.out.println("start");
-//			System.out.println(result);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			fail("まだ実装されていません");
-//		}
-//
-//	}
+
+	@Test
+	public void ReadCSV() {
+		try {
+			String result = TimecardUtil.readCSV(
+					"C:\\Users\\atfam\\OneDrive\\Documents\\Star_View_Data\\Learnings\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp1\\wtpwebapps\\SVD_IntraNet\\csv\\",
+					"sakakibara@starv-data.com");
+			System.out.println(result);
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("まだ実装されていません");
+		}
+
+	}
 
 }
