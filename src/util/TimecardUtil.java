@@ -9,12 +9,14 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.supercsv.prefs.CsvPreference;
 
 import com.github.mygreen.supercsv.io.CsvAnnotationBeanReader;
 import com.github.mygreen.supercsv.io.CsvAnnotationBeanWriter;
 
+import converter.TimecardBeanConverter;
 import dao.AccountDAO;
 import dao.TimeCard;
 import dao.TimeCardDAO;
@@ -26,6 +28,15 @@ public class TimecardUtil {
 
 	private static final String COMMA = ",";
 
+	/** スラッシュ */
+	private static final String SL = "\\";
+
+	private static final String CSV = "csv";
+
+	private static final String fileName = "timecard.csv";
+
+	private static final Charset LN = Charset.forName("MS932");
+
 	/**
 	 * 開始時間から終了時間までの経過時間を計算します。
 	 * @param start_time 開始時間
@@ -33,11 +44,33 @@ public class TimecardUtil {
 	 * @return 勤務時間
 	 */
 	public static int calculate_workingtime(String start_time, String end_time) {
+		if (start_time == null || end_time == null) {
+			return 0;
+		}
 		int result = 0;
 		String[] start_array = DayUtil.formatStr(start_time);
 		String[] end_array = DayUtil.formatStr(end_time);
-		result += (Integer.parseInt(end_array[DayUtil.YEAR]) - Integer.parseInt(start_array[DayUtil.YEAR])) * 365 * 24 * 60;
-		result += (Integer.parseInt(end_array[DayUtil.MONTH]) - Integer.parseInt(start_array[DayUtil.MONTH]))* 24 * 30 * 60;
+		if (start_array == null || end_array == null) {
+			return 0;
+		}
+		//時間しか配列に入っていない場合を考える
+		if (start_array[DayUtil.YEAR] == null && start_array[DayUtil.MONTH] == null
+				&& start_array[DayUtil.DATE] == null) {
+			start_array[DayUtil.YEAR] = "0";
+			start_array[DayUtil.MONTH] = "0";
+			start_array[DayUtil.DATE] = "0";
+		}
+		//時間しか配列に入っていない場合を考える
+		if (end_array[DayUtil.YEAR] == null && end_array[DayUtil.MONTH] == null
+				&& end_array[DayUtil.DATE] == null) {
+			end_array[DayUtil.YEAR] = "0";
+			end_array[DayUtil.MONTH] = "0";
+			end_array[DayUtil.DATE] = "0";
+		}
+		result += (Integer.parseInt(end_array[DayUtil.YEAR]) - Integer.parseInt(start_array[DayUtil.YEAR])) * 365 * 24
+				* 60;
+		result += (Integer.parseInt(end_array[DayUtil.MONTH]) - Integer.parseInt(start_array[DayUtil.MONTH])) * 24 * 30
+				* 60;
 		result += (Integer.parseInt(end_array[DayUtil.DATE]) - Integer.parseInt(start_array[DayUtil.DATE])) * 24 * 60;
 		result += (Integer.parseInt(end_array[DayUtil.HOUR]) - Integer.parseInt(start_array[DayUtil.HOUR])) * 60;
 		result += (Integer.parseInt(end_array[DayUtil.MIN]) - Integer.parseInt(start_array[DayUtil.MIN]));
@@ -53,6 +86,7 @@ public class TimecardUtil {
 	 * @param end YYYYMMDD形式で入力してください
 	 * @param file_path ファイルの保存先を指定してください
 	 */
+	@Deprecated
 	public static void write(String userID, String start, String end, String file_path)
 			throws IOException, IllegalArgumentException {
 
@@ -86,7 +120,7 @@ public class TimecardUtil {
 		List<TimecardBean> output = getTimecardBeans(userID, start, end);
 
 		CsvAnnotationBeanWriter<TimecardBean> csvWriter = new CsvAnnotationBeanWriter<>(TimecardBean.class,
-				Files.newBufferedWriter(new File(file_path).toPath(), Charset.forName("UTF-8")),
+				Files.newBufferedWriter(new File(file_path).toPath(), LN),
 				CsvPreference.EXCEL_PREFERENCE);
 
 		csvWriter.writeHeader();
@@ -130,11 +164,30 @@ public class TimecardUtil {
 		csvWriter.close();
 	}
 
-	public static void writeCSV(String userID, String startTime, String endTime, String filePath) throws IOException {
+	/**
+	 * CSVを出力するメソッド。
+	 *
+	 * @param userID
+	 * @param startTime
+	 * @param endTime
+	 * @param realPath
+	 * @throws IOException
+	 */
+	public static void writeCSV(String userID, String startTime, String endTime, String realPath) throws IOException {
 		//ファイルの存在確認
+		String filePath = getFilePath(realPath, userID);
+		System.out.println(filePath);
+		//各ユーザごとでフォルダを作成し、そこで管理することにする。
 		if (!new File(filePath).exists()) {
 			//ファイルが存在しない場合新しくファイルを作成する
 			System.out.println("ファイル不存在");
+
+			//フォルダ存在チェック
+			if (!new File(getFolderPath(realPath, userID)).exists()) {
+				System.out.println("フォルダがありません。");
+				new File(getFolderPath(realPath, userID)).mkdirs();
+				System.out.println("folderPath:" + getFolderPath(realPath, userID));
+			}
 			try {
 				new File(filePath).createNewFile();
 			} catch (IOException e) {
@@ -142,13 +195,26 @@ public class TimecardUtil {
 			}
 		}
 		//出力データ取得
-		List<TimecardBean> output = getTimecardBeans(userID, startTime, endTime);
-
+		Map<String, List<TimeCard>> output = getTimecardBeansMap(userID, startTime, endTime);
+		List<String> dateSet = output.keySet().stream().collect(Collectors.toList());
+		dateSet = dateSet.stream().sorted().collect(Collectors.toList());
+		List<TimecardBean> timecardBeans = new ArrayList<>();
+		for (String date : dateSet) {
+			List<TimeCard> list = output.get(date);
+			if (list.size() == 0) {
+				System.out.println("null");
+				timecardBeans.add(TimecardBeanConverter.converToTimecardBean(date, userID, null));
+			}
+			for (TimeCard timeCard : list) {
+				timecardBeans.add(TimecardBeanConverter.converToTimecardBean(date,
+						AccountDAO.findAccountByUserID(userID).getName(), timeCard));
+			}
+		}
 
 		CsvAnnotationBeanWriter<TimecardBean> csvWriter = new CsvAnnotationBeanWriter<>(TimecardBean.class,
-				Files.newBufferedWriter(new File(filePath).toPath(), Charset.forName("Shift-JIS")),
+				Files.newBufferedWriter(new File(filePath).toPath(), LN),
 				CsvPreference.EXCEL_PREFERENCE);
-		csvWriter.writeAll(output);
+		csvWriter.writeAll(timecardBeans);
 		csvWriter.close();
 	}
 
@@ -157,10 +223,11 @@ public class TimecardUtil {
 	 * @param filePath
 	 * @return
 	 */
-	public static String readCSV(String filePath) throws IOException {
+	public static String readCSV(String filePath, String userID) throws IOException {
+		filePath = getFilePath(filePath, userID);
 		StringBuilder result = new StringBuilder("");
 		CsvAnnotationBeanReader<TimecardBean> csvReader = new CsvAnnotationBeanReader<>(TimecardBean.class,
-				Files.newBufferedReader(new File(filePath).toPath(), Charset.forName("UTF-8")),
+				Files.newBufferedReader(new File(filePath).toPath(), LN),
 				CsvPreference.EXCEL_PREFERENCE);
 
 		List<TimecardBean> list = new ArrayList<>();
@@ -211,12 +278,14 @@ public class TimecardUtil {
 	}
 
 	/**
-	 *指定した日付の間を含むTimecardをListで出力します
+	 *指定した日付の間を含むTimecardをListで出力します。
+	 *このメソッドは非推奨です。getTimeBeansMapを使用してください。
 	 * @param userID
 	 * @param start YYYYMMDD形式
 	 * @param end
 	 * @return
 	 */
+	@Deprecated
 	private static List<TimecardBean> getTimecardBeans(String userID, String start, String end) {
 
 		List<TimecardBean> result = new ArrayList<TimecardBean>();
@@ -294,6 +363,7 @@ public class TimecardUtil {
 		int size = dateList.size();
 		for (int i = 0; i < size; i++) {
 			String[] tmp = DayUtil.formatStr(dateList.get(i));
+
 			result.put(dateList.get(i), TimeCardDAO.findTimeCardByUserIDANDDate(userID, tmp[DayUtil.YEAR],
 					tmp[DayUtil.MONTH], tmp[DayUtil.DATE]));
 		}
@@ -401,5 +471,27 @@ public class TimecardUtil {
 		}
 		result.append("</select>");
 		return result.toString();
+	}
+
+	/**
+	 * 各ユーザごとにフォルダを作成しそこで保管することにします
+	 * パスは{realPath}/{userID}/csv/timecard.csvとします。
+	 * @param realPath
+	 * @param userID
+	 * @return
+	 */
+	private static String getFilePath(String realPath, String userID) {
+		return realPath + SL + userID + SL + CSV + SL + fileName;
+	}
+
+	/**
+	 * 各ユーザごとにフォルダを作成しそこで保管することにします
+	 * パスは{realPath}/{userID}/csv/timecard.csvとします。
+	 * @param realPath
+	 * @param userID
+	 * @return
+	 */
+	private static String getFolderPath(String realPath, String userID) {
+		return realPath + SL + userID + SL + CSV;
 	}
 }

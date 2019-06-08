@@ -79,10 +79,10 @@ public class AccountDAO {
 			Class.forName("org.h2.Driver");
 
 			//本番環境用
-			connection = DriverManager.getConnection(DatabaseProp.getDatabasePath(), DatabaseProp.getDatabaseUser(),
-					"");
+//			connection = DriverManager.getConnection(DatabaseProp.getDatabasePath(), DatabaseProp.getDatabaseUser(),
+//					"");
 			//テスト用
-			//            connection = DriverManager.getConnection("jdbc:h2:file:C:/data/example", "sa", "");
+			connection = DriverManager.getConnection("jdbc:h2:file:C:/data/example", "sa", "");
 			String sql = (new StringBuilder("SELECT * FROM ACCOUNT WHERE USERID = '")).append(userID).append("'")
 					.toString();
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
