@@ -20,152 +20,138 @@ import model.DatabaseProp;
 // Referenced classes of package dao:
 //            Login, Account
 
-public class AccountDAO
-{
+public class AccountDAO {
 
-    private AccountDAO()
-    {
-        userList = new HashMap();
-    }
+	private AccountDAO() {
+		userList = new HashMap();
+	}
 
-    public static Account findAccountByLogin(Login login)
-    {
-        Account account;
-        Connection connection;
-        account = null;
-        connection = null;
-        try {
-        	Class.forName("org.h2.Driver");
-            DatabaseProp.getDatabasePath();
-            DatabaseProp.getDatabaseUser();
-            connection = DriverManager.getConnection(DatabaseProp.getDatabasePath(), DatabaseProp.getDatabaseUser(), "");
-            String userID = login.getUserID();
-            String password = login.getPassword();
-            String sql = (new StringBuilder("SELECT * FROM ACCOUNT WHERE USERID = '")).append(userID).append("' AND PASSWORD = '").append(password).append("'").toString();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet.next())
-            {
-                String name = resultSet.getString("NAME");
-                String mail = resultSet.getString("MAIL");
-                long lastLogin;
-                try
-                {
-                    lastLogin = resultSet.getLong("LASTLOGIN");
-                }
-                catch(SQLException e)
-                {
-                    e.printStackTrace();
-                    lastLogin = 0L;
-                }
-                account = new Account(userID, password, name, mail, lastLogin);
-            }
-        }catch (ClassNotFoundException e) {
+	public static Account findAccountByLogin(Login login) {
+		Account account;
+		Connection connection;
+		account = null;
+		connection = null;
+		try {
+			Class.forName("org.h2.Driver");
+			DatabaseProp.getDatabasePath();
+			DatabaseProp.getDatabaseUser();
+			connection = DriverManager.getConnection(DatabaseProp.getDatabasePath(), DatabaseProp.getDatabaseUser(),
+					"");
+			String userID = login.getUserID();
+			String password = login.getPassword();
+			String sql = (new StringBuilder("SELECT * FROM ACCOUNT WHERE USERID = '")).append(userID)
+					.append("' AND PASSWORD = '").append(password).append("'").toString();
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				String name = resultSet.getString("NAME");
+				String mail = resultSet.getString("MAIL");
+				long lastLogin;
+				try {
+					lastLogin = resultSet.getLong("LASTLOGIN");
+				} catch (SQLException e) {
+					e.printStackTrace();
+					lastLogin = 0L;
+				}
+				account = new Account(userID, password, name, mail, lastLogin);
+			}
+		} catch (ClassNotFoundException e) {
 			// TODO: handle exception
-		}catch (SQLException e) {
+		} catch (SQLException e) {
 			// TODO: handle exception
-		}finally {
-			if(connection != null)
-	            try
-	            {
-	                connection.close();
-	            }
-	            catch(SQLException e)
-	            {
-	                e.printStackTrace();
-	            }
+		} finally {
+			if (connection != null)
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 		}
-        return account;
-    }
+		return account;
+	}
 
-    public static Account findAccountByUserID(String userID)
-    {
-        Account account = null;
-        Connection connection = null;
-        try {
-        	account = null;
-            connection = null;
-            Class.forName("org.h2.Driver");
-            connection = DriverManager.getConnection(DatabaseProp.getDatabasePath(), DatabaseProp.getDatabaseUser(), "");
-            String sql = (new StringBuilder("SELECT * FROM ACCOUNT WHERE USERID = '")).append(userID).append("'").toString();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet.next())
-            {
-                String password = resultSet.getString("PASSWORD");
-                String name = resultSet.getString("NAME");
-                String mail = resultSet.getString("MAIL");
-                long lastLogin;
-                try
-                {
-                    lastLogin = resultSet.getLong("LASTLOGIN");
-                }
-                catch(SQLException e)
-                {
-                    e.printStackTrace();
-                    lastLogin = 0L;
-                }
-                account = new Account(userID, password, name, mail, lastLogin);
-            }
-        }catch (ClassNotFoundException e) {
+	public static Account findAccountByUserID(String userID) {
+		Account account = null;
+		Connection connection = null;
+		try {
+			account = null;
+			connection = null;
+			Class.forName("org.h2.Driver");
+
+			//本番環境用
+//			connection = DriverManager.getConnection(DatabaseProp.getDatabasePath(), DatabaseProp.getDatabaseUser(),
+//					"");
+			//テスト用
+			connection = DriverManager.getConnection("jdbc:h2:file:C:/data/example", "sa", "");
+			String sql = (new StringBuilder("SELECT * FROM ACCOUNT WHERE USERID = '")).append(userID).append("'")
+					.toString();
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				String password = resultSet.getString("PASSWORD");
+				String name = resultSet.getString("NAME");
+				String mail = resultSet.getString("MAIL");
+				long lastLogin;
+				try {
+					lastLogin = resultSet.getLong("LASTLOGIN");
+				} catch (SQLException e) {
+					e.printStackTrace();
+					lastLogin = 0L;
+				}
+				account = new Account(userID, password, name, mail, lastLogin);
+			}
+		} catch (ClassNotFoundException e) {
 			// TODO: handle exception
-		}catch (SQLException e) {
+		} catch (SQLException e) {
 			// TODO: handle exception
-		}finally {
-			 if(connection != null)
-		            try
-		            {
-		                connection.close();
-		            }
-		            catch(SQLException e)
-		            {
-		                e.printStackTrace();
-		            }
+		} finally {
+			if (connection != null)
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 		}
-        return account;
-    }
+		return account;
+	}
 
-    public static List getAllAccounts()
-    {
-        Connection connection;
-        List accounts = null;
-        Account account = null;
-        connection = null;
-        try {
-        	accounts = new ArrayList();
-            Class.forName("org.h2.Driver");
-            connection = DriverManager.getConnection(DatabaseProp.getDatabasePath(), DatabaseProp.getDatabaseUser(), "");
-            String sql = "SELECT * FROM ACCOUNT";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            for(ResultSet resultSet = preparedStatement.executeQuery(); resultSet.next();)
-            {
-                int count = 1;
-                String userID = resultSet.getString("USERID");
-                String name = resultSet.getString("NAME");
-                String mail = resultSet.getString("MAIL");
-                account = new Account(userID, "", name, mail, 0L);
-                accounts.add(account);
-                count++;
-            }
-        }catch (ClassNotFoundException e) {
+	public static List getAllAccounts() {
+		Connection connection;
+		List accounts = null;
+		Account account = null;
+		connection = null;
+		try {
+			accounts = new ArrayList();
+			Class.forName("org.h2.Driver");
+			connection = DriverManager.getConnection(DatabaseProp.getDatabasePath(), DatabaseProp.getDatabaseUser(),
+					"");
+			String sql = "SELECT * FROM ACCOUNT";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			for (ResultSet resultSet = preparedStatement.executeQuery(); resultSet.next();) {
+				int count = 1;
+				String userID = resultSet.getString("USERID");
+				String name = resultSet.getString("NAME");
+				String mail = resultSet.getString("MAIL");
+				account = new Account(userID, "", name, mail, 0L);
+				accounts.add(account);
+				count++;
+			}
+		} catch (ClassNotFoundException e) {
 			// TODO: handle exception
-		}catch (SQLException e) {
+		} catch (SQLException e) {
 			// TODO: handle exception
-		}finally {
-			if(connection != null)
-	            try
-	            {
-	                connection.close();
-	            }
-	            catch(SQLException e)
-	            {
-	                e.printStackTrace();
-	            }
+		} finally {
+			if (connection != null)
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 		}
-        return accounts;
-    }
+		return accounts;
+	}
 
-    private static AccountDAO accountDAO = new AccountDAO();
-    private Map userList;
+	private static AccountDAO accountDAO = new AccountDAO();
+	private Map userList;
 
 }
