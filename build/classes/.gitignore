@@ -1,3 +1,8 @@
+/controller/
+/dao/
+/filter/
+/test/
 /model/
 /util/
-/dao/
+/converter/
+/enumurated/
